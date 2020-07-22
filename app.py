@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from visualize import *
 from SERS_Substrate import *
 
 data = SERS_Substrate()
