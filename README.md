@@ -30,5 +30,8 @@ Requirements
       
 
 Coming soon: A stand-alone executable is under production and will be released soon.
+
+
+Note: This application currently only supports the visualization and analysis of trimer structures.
       
   
