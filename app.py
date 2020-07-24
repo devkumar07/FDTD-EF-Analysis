@@ -96,7 +96,7 @@ def analyzeEF(event=None):
     EF = analyze(x,y,z,ef)
     """
     EF = enhance_electric_field(EF)
-    message = 'Max = '+str(max(EF))+'\n Mean = '+str(calculate_average_EF(EF))+'\n Median = '+str(calculate_median_EF(EF))+'\n Standard Deviation = '+str(calculate_standard_deviation_EF(EF))
+    message = 'Max = '+str("{:.2E}".format(Decimal(max(EF))))+'\n Mean = '+str(calculate_average_EF(EF))+'\n Median = '+str(calculate_median_EF(EF))+'\n Standard Deviation = '+str(calculate_standard_deviation_EF(EF))
     resultMessage(message)
 
 master = tk.Tk()

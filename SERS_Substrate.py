@@ -77,21 +77,17 @@ class SERS_Substrate:
                 new_e.append(e_i)
         return new_e
 
-    def calculate_average_EF(self):
-        EF = self.ef
-        return "{:.2E}".format(Decimal(statistics.mean(EF)))
-
-    def calculate_median_EF(self):
-        EF = self.ef
-        return "{:.2E}".format(Decimal(statistics.mean(EF)))
-
-    def calculate_standard_deviation_EF(self):
-        EF = self.ef
-        return "{:.2E}".format(Decimal(statistics.mean(EF)))
-
 def radius_threshold(x_i , y_i, z_i, radius, center):
         r = round(math.sqrt((x_i - float(center))**2 + y_i**2 + z_i**2),1)
         if r == float(radius):
             return True
         else:
             return False
+def calculate_average_EF(EF):
+    return "{:.2E}".format(Decimal(statistics.mean(EF)))
+
+def calculate_median_EF(EF):
+    return "{:.2E}".format(Decimal(statistics.mean(EF)))
+
+def calculate_standard_deviation_EF(EF):
+    return "{:.2E}".format(Decimal(statistics.mean(EF)))
