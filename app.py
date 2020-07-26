@@ -67,7 +67,7 @@ def resultMessage(message):
     popup.mainloop()
 
 def convertData(event=None):
-    x, y, z, ef = process_data(master.filename, center.get(), left.get(), right.get(), small_radius.get(), big_radius.get())
+    x, y, z, ef = process_data(master.filename, center.get(), left.get(), right.get(), max_radius.get(), big_radius.get())
     data.set_x(x)
     data.set_y(y)
     data.set_z(z)
@@ -90,7 +90,7 @@ def visualize(event=None):
 
 def analyzeEF(event=None):
     print(master.filename)
-    EF = data.analyze(small_radius.get(), center.get())
+    EF = data.analyze(small_radius.get(), center.get(), max_radius.get())
     """
     x, y, z, ef = process_data(master.filename)
     EF = analyze(x,y,z,ef)
@@ -108,7 +108,7 @@ tk.Label(master, text="Gap Junction").grid(row=3)
 tk.Label(master, text="X-Coordinate of Center Particle").grid(row=4)
 tk.Label(master, text="X-Coordinate of Left Big Particle").grid(row=5)
 tk.Label(master, text="X-Coordinate of Right Big Particle").grid(row=6)
-
+tk.Label(master, text="Max Radius").grid(row=7)
 small_radius = tk.Entry(master)
 small_radius.grid(row=1, column=1)
 big_radius = tk.Entry(master)
@@ -121,14 +121,16 @@ left = tk.Entry(master)
 left.grid(row=5, column=1)
 right = tk.Entry(master)
 right.grid(row=6, column=1)
+max_radius = tk.Entry(master)
+max_radius.grid(row=7, column=1)
 
 tk.Button(
         master, text="Import FDTD Electric Field file",
-        command=find_file).grid(column=0, row=7, padx=20, pady=5)
-tk.Button(master, text='Convert Data', command=convertData).grid(row=8, column=0, sticky=tk.W, pady=4)
-tk.Label(master, text=master.filename).grid(row=8, column = 1)
-tk.Button(master, text='Quit', command=master.quit).grid(row=9, column=0, sticky=tk.W, pady=4)
-tk.Button(master, text='Visualize!', command=visualize).grid(row=9, column=1, sticky=tk.W, pady=4)
-tk.Button(master, text='Analyze!', command=analyzeEF).grid(row=9, column=2, sticky=tk.W, pady=4)
+        command=find_file).grid(column=0, row=8, padx=20, pady=5)
+tk.Button(master, text='Convert Data', command=convertData).grid(row=9, column=0, sticky=tk.W, pady=4)
+tk.Label(master, text=master.filename).grid(row=9, column = 1)
+tk.Button(master, text='Quit', command=master.quit).grid(row=10, column=0, sticky=tk.W, pady=4)
+tk.Button(master, text='Visualize!', command=visualize).grid(row=10, column=1, sticky=tk.W, pady=4)
+tk.Button(master, text='Analyze!', command=analyzeEF).grid(row=10, column=2, sticky=tk.W, pady=4)
 
 tk.mainloop()

@@ -50,8 +50,10 @@ class SERS_Substrate:
         fig = plt.figure(figsize=(8,8))
         ax = fig.add_subplot(111, projection='3d')
 
-
-        img = ax.scatter(self.x, self.y, self.z, c=self.ef, cmap=plt.hot())
+        ef = self.ef
+        ef = np.log10(ef)
+        
+        img = ax.scatter(self.x, self.y, self.z, c=ef, cmap=plt.hot())
         fig.colorbar(img)
 
         ax.set_xlabel('X Label')
@@ -61,7 +63,8 @@ class SERS_Substrate:
 
         plt.show()
 
-    def analyze(self, radius, center):
+    def analyze(self, radius, center, max_radius):
+
         new_e = []
         x = self.x
         y = self.y
@@ -72,14 +75,14 @@ class SERS_Substrate:
             y_i = y[i]
             z_i = z[i]
             e_i = ef[i]
-            check = radius_threshold(x_i,y_i,z_i, radius, center)
+            check = radius_threshold(x_i,y_i,z_i, radius, max_radius, center)
             if check == True:
                 new_e.append(e_i)
         return new_e
 
-def radius_threshold(x_i , y_i, z_i, radius, center):
+def radius_threshold(x_i , y_i, z_i, radius, max_radius, center):
         r = round(math.sqrt((x_i - float(center))**2 + y_i**2 + z_i**2),1)
-        if r == float(radius):
+        if r >= float(radius) and r <= float(max_radius):
             return True
         else:
             return False
@@ -87,7 +90,7 @@ def calculate_average_EF(EF):
     return "{:.2E}".format(Decimal(statistics.mean(EF)))
 
 def calculate_median_EF(EF):
-    return "{:.2E}".format(Decimal(statistics.mean(EF)))
+    return "{:.2E}".format(Decimal(statistics.median(EF)))
 
 def calculate_standard_deviation_EF(EF):
-    return "{:.2E}".format(Decimal(statistics.mean(EF)))
+    return "{:.2E}".format(Decimal(statistics.stdev(EF)))
