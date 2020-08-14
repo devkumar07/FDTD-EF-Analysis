@@ -9,7 +9,7 @@ def enhance_electric_field(EF):
         EF[i] = EF[i]**4
     return EF
 
-def process_data(file_name, center, left, right, center_radius, big_radius):
+def process_data(file_name, center, vertical_shift, left, right, center_radius, big_radius):
         data = pd.read_csv(file_name, sep='\t', header=None)
         x = data.iloc[0]
         x = x.multiply(other = 1000000000, fill_value = 0)
@@ -32,7 +32,7 @@ def process_data(file_name, center, left, right, center_radius, big_radius):
             y_i = y[i]
             z_i = z[i]
             e_i = ef[i]
-            if (x_i - float(center))*(x_i - float(center)) + (y_i)*(y_i) +(z_i)*(z_i) <= (float(center_radius)**2):
+            if (x_i - float(center))*(x_i - float(center)) + (y_i - float(vertical_shift))*(y_i - float(vertical_shift)) +(z_i)*(z_i) <= (float(center_radius)**2):
                 new_x.append(x_i)
                 new_y.append(y_i)
                 new_z.append(z_i)
@@ -67,7 +67,7 @@ def resultMessage(message):
     popup.mainloop()
 
 def convertData(event=None):
-    x, y, z, ef = process_data(master.filename, center.get(), left.get(), right.get(), max_radius.get(), big_radius.get())
+    x, y, z, ef = process_data(master.filename, center.get(), vertical_shift.get(), left.get(), right.get(), max_radius.get(), big_radius.get())
     data.set_x(x)
     data.set_y(y)
     data.set_z(z)
@@ -82,6 +82,9 @@ def find_file(event=None):
 
 def visualize(event=None):
     print(master.filename)
+    e_field = data.get_ef()
+    e_field = enhance_electric_field(e_field)
+    data.set_ef(e_field)
     data.plot()
     """
     x, y, z, ef = process_data(master.filename)
@@ -104,7 +107,7 @@ master = tk.Tk()
 master.filename =''
 tk.Label(master, text="Radius of Center Particle").grid(row=1)
 tk.Label(master, text="Radius of Big Particles").grid(row=2)
-tk.Label(master, text="Gap Junction").grid(row=3)
+tk.Label(master, text="Vertical Shift").grid(row=3)
 tk.Label(master, text="X-Coordinate of Center Particle").grid(row=4)
 tk.Label(master, text="X-Coordinate of Left Big Particle").grid(row=5)
 tk.Label(master, text="X-Coordinate of Right Big Particle").grid(row=6)
@@ -113,8 +116,8 @@ small_radius = tk.Entry(master)
 small_radius.grid(row=1, column=1)
 big_radius = tk.Entry(master)
 big_radius.grid(row=2, column=1)
-gap_junction = tk.Entry(master)
-gap_junction.grid(row=3, column=1)
+vertical_shift = tk.Entry(master)
+vertical_shift.grid(row=3, column=1)
 center = tk.Entry(master)
 center.grid(row=4, column=1)
 left = tk.Entry(master)
