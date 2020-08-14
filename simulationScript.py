@@ -5,7 +5,8 @@ import statistics
 from decimal import Decimal
 from SERS_Substrate import *
 
-def process_data(file_name, center, left, right, center_radius, big_radius):
+#This function processes the data from FDTD to keep only trimer points
+def process_data(file_name, center, left, right, center_radius, big_radius, vertical_shift):
         data = pd.read_csv(file_name, sep='\t', header=None)
         x = data.iloc[0]
         x = x.multiply(other = 1000000000, fill_value = 0)
@@ -28,7 +29,7 @@ def process_data(file_name, center, left, right, center_radius, big_radius):
             y_i = y[i]
             z_i = z[i]
             e_i = ef[i]
-            if (x_i - float(center))*(x_i - float(center)) + (y_i)*(y_i) +(z_i)*(z_i) <= (float(center_radius)**2):
+            if (x_i - float(center))*(x_i - float(center)) + (y_i - float(vertical_shift))*(y_i - float(vertical_shift)) +(z_i)*(z_i) <= (float(center_radius)**2):
                 new_x.append(x_i)
                 new_y.append(y_i)
                 new_z.append(z_i)
@@ -53,13 +54,22 @@ def process_data(file_name, center, left, right, center_radius, big_radius):
 
         return x,y,z,ef
 
-def radius_threshold(x_i , y_i, z_i, radius, max_radius, center):
-    r = round(math.sqrt((x_i - float(center))**2 + y_i**2 + z_i**2),1)
-    if r >= float(radius) and r <= float(max_radius):
-        return True
+#Function to accurately fetch EF and coordinates of surface
+def radius_threshold(x_i , y_i, z_i, radius, max_radius, center, vertical_shift):
+    if float(max_radius) != float(radius):
+        r = round(math.sqrt((x_i - float(center))**2 + (y_i -float(vertical_shift))**2 + z_i**2),1)
+        if r >= float(radius) and r <= float(max_radius):
+            return True
+        else:
+            return False
     else:
-        return False
+        r = round(math.sqrt((x_i - float(center))**2 + (y_i -float(vertical_shift))**2 + z_i**2),1)
+        if r == float(radius):
+            return True
+        else:
+            return False
 
+#Raise the EF to ^4
 def enhance_electric_field(EF):
     for i in range(0,len(EF)):
         EF[i] = EF[i]**4
@@ -76,13 +86,14 @@ def calculate_standard_deviation_EF(EF):
 
 print("Begining simulation")
 data = SERS_Substrate()
-center = 0
-left = -23
-right = 23
-center_radius = 5
-big_radius = 15
-file_name = 'e_field.txt'
-x, y, z, ef = process_data(file_name,center, left, right, center_radius, big_radius)
+center = 0 #center of small particle
+left = -23 #left center of big particle
+right = 23 #right center of big particle
+center_radius = 5 #radius for center of small particle
+big_radius = 15 #radius for center of big particle
+vertical_shift = 0 #Vertical shift in y direction for center particle
+file_name = 'e_field.txt' #name of EField file
+x, y, z, ef = process_data(file_name,center, left, right, center_radius, big_radius, vertical_shift)
 
 data = pd.read_csv(file_name, sep='\t', header=None)
 x = data.iloc[0]
@@ -96,6 +107,9 @@ z = z.multiply(other = 1000000000, fill_value = 0)
 z = z.values
 ef = data.iloc[3]
 ef = ef.values
+
+#The below commented code is not important. Ignore
+"""
 new_x = []
 new_y = []
 new_z = []
@@ -128,6 +142,7 @@ x = np.array(new_x)
 y = np.array(new_y)
 z = np.array(new_z)
 ef = np.array(new_e)
+"""
 
 print("Data Processed!")
 

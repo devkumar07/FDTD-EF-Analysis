@@ -72,6 +72,7 @@ def convertData(event=None):
     data.set_y(y)
     data.set_z(z)
     data.set_ef(ef)
+    data.enhance_electric_field()
     resultMessage("Data Processed!")
 
 def find_file(event=None):
@@ -82,9 +83,11 @@ def find_file(event=None):
 
 def visualize(event=None):
     print(master.filename)
+    """
     e_field = data.get_ef()
     e_field = enhance_electric_field(e_field)
     data.set_ef(e_field)
+    """
     data.plot()
     """
     x, y, z, ef = process_data(master.filename)
@@ -93,13 +96,15 @@ def visualize(event=None):
 
 def analyzeEF(event=None):
     print(master.filename)
-    EF = data.analyze(small_radius.get(), center.get(), max_radius.get())
+    EF = data.analyze(small_radius.get(), center.get(), max_radius.get(), vertical_shift.get())
+    filtered_data = SERS_Substrate()
+    filtered_data.set_ef(EF)
     """
     x, y, z, ef = process_data(master.filename)
     EF = analyze(x,y,z,ef)
     """
-    EF = enhance_electric_field(EF)
-    message = 'Max = '+str("{:.2E}".format(Decimal(max(EF))))+'\n Mean = '+str(calculate_average_EF(EF))+'\n Median = '+str(calculate_median_EF(EF))+'\n Standard Deviation = '+str(calculate_standard_deviation_EF(EF))
+    #EF = enhance_electric_field(EF)
+    message = 'Max = '+str("{:.2E}".format(Decimal(max(filtered_data.get_ef()))))+'\n Mean = '+str(filtered_data.calculate_average_EF())+'\n Median = '+str(filtered_data.calculate_median_EF())+'\n Standard Deviation = '+str(filtered_data.calculate_standard_deviation_EF())
     resultMessage(message)
 
 master = tk.Tk()

@@ -63,7 +63,7 @@ class SERS_Substrate:
 
         plt.show()
 
-    def analyze(self, radius, center, max_radius):
+    def analyze(self, radius, center, max_radius, vertical_shift):
 
         new_e = []
         x = self.x
@@ -75,22 +75,35 @@ class SERS_Substrate:
             y_i = y[i]
             z_i = z[i]
             e_i = ef[i]
-            check = radius_threshold(x_i,y_i,z_i, radius, max_radius, center)
+            check = radius_threshold(x_i,y_i,z_i, radius, max_radius, center, vertical_shift)
             if check == True:
                 new_e.append(e_i)
         return new_e
+    def enhance_electric_field(self):
+        EF = self.ef
+        for i in range(0,len(EF)):
+            EF[i] = EF[i]**4
+        self.ef = EF
 
-def radius_threshold(x_i , y_i, z_i, radius, max_radius, center):
-        r = round(math.sqrt((x_i - float(center))**2 + y_i**2 + z_i**2),1)
+    def calculate_average_EF(self):
+        return "{:.2E}".format(Decimal(statistics.mean(self.ef)))
+
+    def calculate_median_EF(self):
+        return "{:.2E}".format(Decimal(statistics.median(self.ef)))
+
+    def calculate_standard_deviation_EF(self):
+        return "{:.2E}".format(Decimal(statistics.stdev(self.ef)))
+
+def radius_threshold(x_i , y_i, z_i, radius, max_radius, center, vertical_shift):
+    if float(max_radius) != float(radius):
+        r = round(math.sqrt((x_i - float(center))**2 + (y_i -float(vertical_shift))**2 + z_i**2),1)
         if r >= float(radius) and r <= float(max_radius):
             return True
         else:
             return False
-def calculate_average_EF(EF):
-    return "{:.2E}".format(Decimal(statistics.mean(EF)))
-
-def calculate_median_EF(EF):
-    return "{:.2E}".format(Decimal(statistics.median(EF)))
-
-def calculate_standard_deviation_EF(EF):
-    return "{:.2E}".format(Decimal(statistics.stdev(EF)))
+    else:
+        r = round(math.sqrt((x_i - float(center))**2 + (y_i -float(vertical_shift))**2 + z_i**2),1)
+        if r == float(radius):
+            return True
+        else:
+            return False
